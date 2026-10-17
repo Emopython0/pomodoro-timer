@@ -3,224 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FocusSpace Pro - Aesthetic Pomodoro</title>
+    <title>FocusSpace Nexus - Premium Tactile Pomodoro</title>
     <style>
         :root {
-            --bg-deep: #090d16;
-            --panel-glass: rgba(30, 41, 59, 0.4);
-            --border-glass: rgba(255, 255, 255, 0.08);
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-default: #38bdf8;
-            --shadow-glow: rgba(56, 189, 248, 0.15);
+            --bg-base: #030712;
+            --panel-glass: rgba(17, 24, 39, 0.7);
+            --border-glass: rgba(255, 255, 255, 0.06);
+            --text-main: #f9fafb;
+            --text-muted: #6b7280;
+            --accent-focus: #38bdf8;   /* Sky Blue */
+            --accent-break: #10b981;   /* Emerald Green */
+            --accent-long: #8b5cf6;    /* Violet */
+            --current-accent: var(--accent-focus);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-deep);
-            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            margin: 0;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            transition: background-color 0.5s ease;
+            padding: 20px;
+            overflow-x: hidden;
         }
 
-        /* Glassmorphic Panel Container */
-        .glass-panel {
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* Glassmorphic Tactical Card Layout */
+        .glass-card {
             background: var(--panel-glass);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--border-glass);
-            padding: 3.5rem 2.5rem;
-            border-radius: 28px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-            width: 340px;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             text-align: center;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: border-color 0.5s ease, box-shadow 0.5s ease;
         }
 
-        .glass-panel:hover {
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 30px var(--shadow-glow);
-            border-color: rgba(255,255,255,0.15);
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6), 0 0 40px -10px var(--current-accent);
         }
 
-        /* Micro-Typography */
-        .brand-header {
-            font-size: 0.85rem;
+        /* Dynamic Engine Session State Toggle Tabs */
+        .session-tabs {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px;
+            border-radius: 14px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+
+        .tab-node {
+            flex: 1;
+            padding: 8px 4px;
+            font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
+            letter-spacing: 1px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Chrono Display engine */
-        .chrono-display {
+        .tab-node.active[data-type="focus"] { color: var(--bg-base); background: var(--accent-focus); }
+        .tab-node.active[data-type="short"] { color: var(--bg-base); background: var(--accent-break); }
+        .tab-node.active[data-type="long"] { color: var(--bg-base); background: var(--accent-long); }
+
+        /* Timer Numeric Framework */
+        .timer-display {
             font-size: 5.5rem;
             font-weight: 800;
-            letter-spacing: -2px;
-            margin-bottom: 2.5rem;
+            letter-spacing: -3px;
             font-variant-numeric: tabular-nums;
-            background: linear-gradient(135deg, #ffffff 0%, var(--text-secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            color: var(--text-main);
         }
 
-        /* Tactical Button Systems */
-        .btn-action {
-            background: var(--text-primary);
+        .control-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .btn-prime {
+            background: var(--text-main);
             border: none;
-            color: var(--bg-deep);
-            padding: 1rem 3rem;
+            color: var(--bg-base);
+            padding: 1rem 2.5rem;
             font-size: 1rem;
             font-weight: 700;
             border-radius: 50px;
+            cursor: pointer;
             letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 14px rgba(255, 255, 255, 0.1);
-        }
-
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
-            background: #ffffff;
-        }
-
-        .btn-action:active {
-            transform: translateY(0);
-        }
-
-        /* Configuration Nodes / Selectors */
-        .theme-selector {
-            margin-top: 2.5rem;
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        .theme-dot {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
             transition: all 0.2s ease;
         }
 
-        .theme-dot.active {
-            border-color: #ffffff;
-            transform: scale(1.2);
+        .btn-prime:hover {
+            transform: translateY(-2px);
+            background: #ffffff;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
         }
 
-        /* Native Ambient Noise Generators */
-        .audio-node {
-            margin-top: 1.5rem;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-main);
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
             cursor: pointer;
-            opacity: 0.6;
-            transition: opacity 0.2s ease;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
         }
-        .audio-node:hover { opacity: 1; }
+
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
+
+        /* Task Engine Input Nodes */
+        .task-input-group {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 8px;
+        }
+
+        .field-input {
+            flex: 1;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .field-input:focus { border-color: var(--current-accent); }
+
+        .btn-add {
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: var(--text-main);
+            padding: 0 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .btn-add:hover { background: rgba(255,255,255,0.15); }
+
+        /* Task Telemetry Table */
+        .task-list {
+            margin-top: 1.5rem;
+            text-align: left;
+            max-height: 160px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--current-accent);
+            font-size: 0.9rem;
+        }
+
+        .task-item.complete {
+            opacity: 0.4;
+            text-decoration: line-through;
+            border-left-color: var(--text-muted);
+        }
+
+        .task-checkbox {
+            cursor: pointer;
+            accent-color: var(--current-accent);
+        }
     </style>
 </head>
 <body>
 
-<div class="glass-panel">
-    <div class="brand-header" id="sessionStatus">Focus Session</div>
-    <div class="chrono-display" id="timeDisplay">25:00</div>
-    <div class="controls">
-        <button class="btn-action" id="triggerBtn" onclick="toggleEngine()">START</button>
-    </div>
-    
-    <div class="theme-selector">
-        <div class="theme-dot active" style="background: #38bdf8;" onclick="switchTheme('#090d16', '#38bdf8', this)"></div>
-        <div class="theme-dot" style="background: #f43f5e;" onclick="switchTheme('#110608', '#f43f5e', this)"></div>
-        <div class="theme-dot" style="background: #10b981;" onclick="switchTheme('#040d0a', '#10b981', this)"></div>
-    </div>
+<div class="workspace-grid">
+    <!-- Main Focus Engine Card -->
+    <div class="glass-card">
+        <div class="session-tabs">
+            <div class="tab-node active" data-type="focus" onclick="setMode('focus', 25 * 60, this)">Focus</div>
+            <div class="tab-node" data-type="short" onclick="setMode('short', 5 * 60, this)">Short Break</div>
+            <div class="tab-node" data-type="long" onclick="setMode('long', 15 * 60, this)">Long Break</div>
+        </div>
 
-    <div class="audio-node" onclick="toggleAudioHint()">🎵 Click for Audio Alert Test</div>
+        <div class="timer-display" id="clockDisplay">25:00</div>
+
+        <div class="control-row">
+            <button class="btn-prime" id="masterTrigger" onclick="toggleTimerLoop()">START</button>
+            <button class="btn-secondary" onclick="resetTimerLoop()">🔄</button>
+        </div>
+
+        <!-- Custom Task Adder Node System -->
+        <div class="task-input-group">
+            <input type="text" class="field-input" id="taskInputField" placeholder="Enter custom session objective..." autocomplete="off">
+            <button class="btn-add" onclick="addNewObjective()">ADD</button>
+        </div>
+
+        <!-- Task Telemetry Display Board -->
+        <div class="task-list" id="telemetryTaskBoard"></div>
+    </div>
 </div>
 
 <script>
-    let timeLeft = 25 * 60;
-    let runningState = false;
-    let engineInterval = null;
+    let durationLeft = 25 * 60;
+    let clockRunning = false;
+    let clockIntervalInstance = null;
+    let workingMode = 'focus';
+    let defaultTimeAllocated = 25 * 60;
 
-    function renderDisplay() {
-        const mins = Math.floor(timeLeft / 60);
-        const secs = timeLeft % 60;
-        const completeString = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        document.getElementById('timeDisplay').textContent = completeString;
-        document.title = `(${completeString}) FocusSpace`;
+    function renderInterfaceDisplay() {
+        const structuralMins = Math.floor(durationLeft / 60);
+        const structuralSecs = durationLeft % 60;
+        const completeTimeString = `${structuralMins.toString().padStart(2, '0')}:${structuralSecs.toString().padStart(2, '0')}`;
+        document.getElementById('clockDisplay').textContent = completeTimeString;
+        document.title = `(${completeTimeString}) FocusSpace Nexus`;
     }
 
-    function toggleEngine() {
-        const stateBtn = document.getElementById('triggerBtn');
-        if (runningState) {
-            clearInterval(engineInterval);
-            stateBtn.textContent = 'START';
-            runningState = false;
+    function setMode(modeType, totalSeconds, triggerElement) {
+        workingMode = modeType;
+        defaultTimeAllocated = totalSeconds;
+        durationLeft = totalSeconds;
+        
+        // Dynamic Variable Mapping Updates
+        if(modeType === 'focus') document.documentElement.style.setProperty('--current-accent', 'var(--accent-focus)');
+        if(modeType === 'short') document.documentElement.style.setProperty('--current-accent', 'var(--accent-break)');
+        if(modeType === 'long') document.documentElement.style.setProperty('--current-accent', 'var(--accent-long)');
+
+        document.querySelectorAll('.tab-node').forEach(node => node.classList.remove('active'));
+        triggerElement.classList.add('active');
+        
+        if (clockRunning) toggleTimerLoop();
+        renderInterfaceDisplay();
+    }
+
+    function toggleTimerLoop() {
+        const mainBtn = document.getElementById('masterTrigger');
+        if (clockRunning) {
+            clearInterval(clockIntervalInstance);
+            mainBtn.textContent = 'START';
+            clockRunning = false;
         } else {
-            runningState = true;
-            stateBtn.textContent = 'PAUSE';
-            engineInterval = setInterval(() => {
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    renderDisplay();
+            clockRunning = true;
+            mainBtn.textContent = 'PAUSE';
+            clockIntervalInstance = setInterval(() => {
+                if (durationLeft > 0) {
+                    durationLeft--;
+                    renderInterfaceDisplay();
                 } else {
-                    triggerAlertNotification();
+                    executeSessionTermination();
                 }
             }, 1000);
         }
     }
 
-    function triggerAlertNotification() {
-        clearInterval(engineInterval);
-        runningState = false;
-        document.getElementById('triggerBtn').textContent = 'START';
-        timeLeft = 25 * 60;
-        renderDisplay();
-        
-        // Native Web Audio API Sound Generation Architecture (No external asset dependency)
-        const context = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = context.createOscillator();
-        const gain = context.createGain();
-        osc.connect(gain);
-        gain.connect(context.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, context.currentTime); // C5 clean tone note
-        gain.gain.setValueAtTime(0.3, context.currentTime);
-        osc.start();
-        gain.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 1.5);
-        osc.stop(context.currentTime + 1.5);
-
-        alert("Focus block achieved successfully. Initiate recovery break.");
+    function resetTimerLoop() {
+        clearInterval(clockIntervalInstance);
+        clockRunning = false;
+        document.getElementById('masterTrigger').textContent = 'START';
+        durationLeft = defaultTimeAllocated;
+        renderInterfaceDisplay();
     }
 
-    function switchTheme(bg, accent, element) {
-        document.body.style.backgroundColor = bg;
-        document.documentElement.style.setProperty('--shadow-glow', `${accent}26`);
-        document.querySelectorAll('.theme-dot').forEach(dot => dot.classList.remove('active'));
-        element.classList.add('active');
-    }
-
-    function toggleAudioHint() {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-        o.connect(g); g.connect(ctx.destination);
-        o.frequency.setValueAtTime(440, ctx.currentTime);
-        g.gain.setValueAtTime(0.1, ctx.currentTime);
-        o.start(); g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.5);
-        o.stop(ctx.currentTime + 0.5);
-    }
-</script>
-</body>
-</html>
+    function executeSessionTermination() {
+        clearInterval(clockIntervalInstance);
+        clockRunning = false;
