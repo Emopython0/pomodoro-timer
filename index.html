@@ -3,299 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FocusSpace Nexus - Stable Edition</title>
+    <title>FocusSpace - Minimalist Pomodoro</title>
     <style>
         :root {
-            --bg-base: #030712;
-            --panel-glass: rgba(17, 24, 39, 0.75);
-            --border-glass: rgba(255, 255, 255, 0.08);
-            --text-main: #f9fafb;
-            --text-muted: #6b7280;
-            --accent-focus: #38bdf8;
-            --accent-break: #10b981;
-            --accent-long: #8b5cf6;
-            --current-accent: var(--accent-focus);
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #38bdf8;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-base);
+            background-color: var(--bg-color);
             color: var(--text-main);
-            margin: 0;
-            min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            height: 100vh;
+            margin: 0;
         }
-
-        .workspace-grid {
-            width: 100%;
-            max-width: 360px;
-        }
-
-        .glass-card {
-            background: var(--panel-glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            border-radius: 24px;
-            padding: 2rem 1.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        .container {
             text-align: center;
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 320px;
         }
-
-        .session-tabs {
-            display: flex;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 4px;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255,255,255,0.02);
-        }
-
-        .tab-node {
-            flex: 1;
-            padding: 10px 2px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: var(--text-muted);
-            transition: all 0.2s ease;
-        }
-
-        .tab-node.active { color: var(--bg-base); }
-        .tab-node.active[data-type="focus"] { background: var(--accent-focus); }
-        .tab-node.active[data-type="short"] { background: var(--accent-break); }
-        .tab-node.active[data-type="long"] { background: var(--accent-long); }
-
-        .timer-display {
-            font-size: 5rem;
-            font-weight: 800;
-            letter-spacing: -2px;
-            font-variant-numeric: tabular-nums;
-            margin-bottom: 2rem;
-        }
-
-        .control-row {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .btn-prime {
-            background: var(--text-main);
-            border: none;
-            color: var(--bg-base);
-            padding: 0.8rem 2.5rem;
+        h1 { font-size: 1.5rem; margin-bottom: 2rem; color: var(--text-dim); letter-spacing: 1px; }
+        .timer { font-size: 5rem; font-weight: bold; margin-bottom: 2rem; font-variant-numeric: tabular-nums; }
+        .controls button {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 0.75rem 2rem;
             font-size: 1rem;
-            font-weight: 700;
             border-radius: 50px;
             cursor: pointer;
-            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            font-weight: 600;
         }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-glass);
-            color: var(--text-main);
-            width: 46px;
-            height: 46px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .task-input-group {
-            margin-top: 1.5rem;
-            display: flex;
-            gap: 8px;
-        }
-
-        .field-input {
-            flex: 1;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border-glass);
-            border-radius: 10px;
-            padding: 10px 14px;
-            color: var(--text-main);
-            font-size: 0.85rem;
-            outline: none;
-        }
-
-        .btn-add {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: var(--text-main);
-            padding: 0 14px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.8rem;
-        }
-
-        .task-list {
-            margin-top: 1.2rem;
-            text-align: left;
-            max-height: 140px;
-            overflow-y: auto;
-        }
-
-        .task-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0,0,0,0.2);
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-            border-left: 3px solid var(--current-accent);
-        }
-
-        .task-item.complete {
-            opacity: 0.3;
-            text-decoration: line-through;
-            border-left-color: var(--text-muted);
+        .controls button:hover {
+            background: var(--accent);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
         }
     </style>
 </head>
 <body>
 
-<div class="workspace-grid">
-    <div class="glass-card">
-        <div class="session-tabs">
-            <div class="tab-node active" data-type="focus" onclick="changeMode('focus', 25 * 60, this)">Focus</div>
-            <div class="tab-node" data-type="short" onclick="changeMode('short', 5 * 60, this)">Short</div>
-            <div class="tab-node" data-type="long" onclick="changeMode('long', 15 * 60, this)">Long</div>
-        </div>
-
-        <div class="timer-display" id="displayBox">25:00</div>
-
-        <div class="control-row">
-            <button class="btn-prime" id="actionTrigger" onclick="controlEngine()">START</button>
-            <button class="btn-secondary" onclick="resetEngine()">🔄</button>
-        </div>
-
-        <div class="task-input-group">
-            <input type="text" class="field-input" id="taskEntry" placeholder="Add custom session task..." autocomplete="off">
-            <button class="btn-add" onclick="pushTask()">ADD</button>
-        </div>
-
-        <div class="task-list" id="taskBoard"></div>
+<div class="container">
+    <h1>FOCUS // SPACE</h1>
+    <div class="timer" id="display">25:00</div>
+    <div class="controls">
+        <button id="startBtn" onclick="toggleTimer()">START</button>
     </div>
 </div>
 
 <script>
-    let secondsLeft = 25 * 60;
-    let engineRunning = false;
-    let masterInterval = null;
-    let selectionMode = 'focus';
-    let baseTimeAllocation = 25 * 60;
-    let globalAudioCtx = null; // Auto-scaffold sound node architecture safely
+    let timeLeft = 25 * 60;
+    let timerId = null;
+    let isRunning = false;
 
-    function printClock() {
-        const structuralMinutes = Math.floor(secondsLeft / 60);
-        const structuralSeconds = secondsLeft % 60;
-        document.getElementById('displayBox').textContent = 
-            `${structuralMinutes.toString().padStart(2, '0')}:${structuralSeconds.toString().padStart(2, '0')}`;
+    function updateDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById('display').textContent = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
 
-    function changeMode(targetMode, targetSeconds, tabElement) {
-        selectionMode = targetMode;
-        baseTimeAllocation = targetSeconds;
-        secondsLeft = targetSeconds;
-        
-        if(targetMode === 'focus') document.documentElement.style.setProperty('--current-accent', 'var(--accent-focus)');
-        if(targetMode === 'short') document.documentElement.style.setProperty('--current-accent', 'var(--accent-break)');
-        if(targetMode === 'long') document.documentElement.style.setProperty('--current-accent', 'var(--accent-long)');
-
-        document.querySelectorAll('.tab-node').forEach(n => n.classList.remove('active'));
-        tabElement.classList.add('active');
-        
-        if (engineRunning) controlEngine(); // Force safe stop
-        printClock();
-    }
-
-    function controlEngine() {
-        const btn = document.getElementById('actionTrigger');
-        
-        // Defensive Audio Unlock Phase for iOS/Safari browsers
-        if (!globalAudioCtx) {
-            globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (globalAudioCtx.state === 'suspended') {
-            globalAudioCtx.resume();
-        }
-
-        if (engineRunning) {
-            clearInterval(masterInterval);
+    function toggleTimer() {
+        const btn = document.getElementById('startBtn');
+        if (isRunning) {
+            clearInterval(timerId);
             btn.textContent = 'START';
-            engineRunning = false;
+            isRunning = false;
         } else {
-            engineRunning = true;
+            isRunning = true;
             btn.textContent = 'PAUSE';
-            masterInterval = setInterval(() => {
-                if (secondsLeft > 0) {
-                    secondsLeft--;
-                    printClock();
+            timerId = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateDisplay();
                 } else {
-                    handleIntervalAlert();
+                    clearInterval(timerId);
+                    alert("Session complete! Take a break.");
+                    timeLeft = 25 * 60;
+                    updateDisplay();
+                    btn.textContent = 'START';
+                    isRunning = false;
                 }
             }, 1000);
         }
     }
-
-    function resetEngine() {
-        clearInterval(masterInterval);
-        engineRunning = false;
-        document.getElementById('actionTrigger').textContent = 'START';
-        secondsLeft = baseTimeAllocation;
-        printClock();
-    }
-
-    function handleIntervalAlert() {
-        clearInterval(masterInterval);
-        engineRunning = false;
-        document.getElementById('actionTrigger').textContent = 'START';
-        secondsLeft = baseTimeAllocation;
-        printClock();
-
-        try {
-            // Direct Synthesis - Prevents empty resource load failures completely
-            const osc = globalAudioCtx.createOscillator();
-            const gain = globalAudioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(globalAudioCtx.destination);
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(440, globalAudioCtx.currentTime); // A4 Standard
-            gain.gain.setValueAtTime(0.2, globalAudioCtx.currentTime);
-            osc.start();
-            gain.gain.exponentialRampToValueAtTime(0.0001, globalAudioCtx.currentTime + 1.0);
-            osc.stop(globalAudioCtx.currentTime + 1.0);
-        } catch(e) { console.log(e); }
-
-        setTimeout(() => {
-            alert(`Interval complete: ${selectionMode.toUpperCase()} session ended.`);
-        }, 50);
-    }
-
-    function pushTask() {
-        const input = document.getElementById('taskEntry');
-        const txt = input.value.trim();
-        if (!txt) return;
-
-        const board = document.getElementById('taskBoard');
-        const card = document.createElement('div');
-        card.className = 'task-item';
-        
-        const label = document.createElement('span');
-        label.textContent = txt;
-        
+</script>
+</body>
+</html>
